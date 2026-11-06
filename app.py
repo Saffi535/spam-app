@@ -1,5 +1,6 @@
 import streamlit as st
 import pickle
+import streamlit.components.v1 as components
 
 # Page styling & config
 st.set_page_config(
@@ -7,6 +8,47 @@ st.set_page_config(
     page_icon="📩",
     layout="centered"
 )
+
+# 1. Custom Background Wallpaper via CSS
+background_image_url = "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1920&q=80"
+
+custom_css = f"""
+<style>
+.stApp {{
+    background-image: linear-gradient(rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.72)), url("{background_image_url}");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}}
+
+/* Card container and text readability */
+.stMarkdown, h1, h2, h3, p, span, label {{
+    color: #f1f5f9 !important;
+}}
+
+.stTextArea textarea {{
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    border-radius: 8px;
+}}
+</style>
+"""
+st.markdown(custom_css, unsafe_allow_html=True)
+
+# 2. Text to Speech Function (Browser Voice)
+def play_voice(text):
+    clean_text = text.replace("'", "").replace('"', '')
+    js_code = f"""
+    <script>
+        window.speechSynthesis.cancel();
+        var msg = new SpeechSynthesisUtterance('{clean_text}');
+        msg.rate = 1.0;
+        msg.pitch = 1.0;
+        window.speechSynthesis.speak(msg);
+    </script>
+    """
+    components.html(js_code, height=0, width=0)
 
 # Title & Description
 st.title("📩 SMS & Text Spam Classifier")
@@ -46,10 +88,7 @@ try:
         if not user_input.strip():
             st.warning("Pehle koi text message enter karein!")
         else:
-            # Transform text through TF-IDF
             transformed_input = vectorizer.transform([user_input])
-
-            # Model prediction
             prediction = model.predict(transformed_input)[0]
             probability = model.predict_proba(transformed_input)[0]
 
@@ -59,11 +98,13 @@ try:
                 st.error(f"🚨 **SPAM Message Detected!**")
                 st.write(f"**Confidence:** `{confidence:.2f}%`")
                 st.progress(probability[1])
+                play_voice("Alert! This message is classified as Spam.")
             else:
                 confidence = probability[0] * 100
                 st.success(f"✅ **HAM (Legitimate Message)**")
                 st.write(f"**Confidence:** `{confidence:.2f}%`")
                 st.progress(probability[0])
+                play_voice("This message is legitimate and safe.")
 
 except FileNotFoundError:
-    st.error("⚠️ Model files nahi milin! Check karein ke `rf_model.pkl` aur `tfidf_vectorizer.pkl` usi folder mein maujood hain jahan yeh `app.py` run ho rahi hai.")
+    st.error("⚠️ Model files nahi milin! Check karein ke `rf_model.pkl` aur `tfidf_vectorizer.pkl` repo mein upload hain.")
