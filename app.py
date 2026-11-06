@@ -9,28 +9,51 @@ st.set_page_config(
     layout="centered"
 )
 
-# 1. Custom Background Wallpaper via CSS
+# 1. Background Wallpaper & Modern Glass UI CSS
 background_image_url = "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1920&q=80"
 
 custom_css = f"""
 <style>
 .stApp {{
-    background-image: linear-gradient(rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.72)), url("{background_image_url}");
+    background-image: linear-gradient(rgba(10, 15, 29, 0.82), rgba(10, 15, 29, 0.88)), url("{background_image_url}");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
 }}
 
-/* Card container and text readability */
-.stMarkdown, h1, h2, h3, p, span, label {{
-    color: #f1f5f9 !important;
+/* Clean readable headings & text */
+h1, h2, h3, p, span, label {{
+    color: #f8fafc !important;
 }}
 
+/* Dark Glassmorphism Input Textarea */
 .stTextArea textarea {{
-    background-color: rgba(255, 255, 255, 0.08) !important;
+    background-color: rgba(15, 23, 42, 0.75) !important;
+    color: #38bdf8 !important;
+    font-size: 16px !important;
+    border: 1.5px solid rgba(56, 189, 248, 0.35) !important;
+    border-radius: 10px !important;
+    backdrop-filter: blur(8px) !important;
+}}
+
+.stTextArea textarea:focus {{
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 10px rgba(56, 189, 248, 0.4) !important;
+}}
+
+/* Quick Action Secondary Buttons */
+div[data-testid="stHorizontalBlock"] button {{
+    background-color: rgba(30, 41, 59, 0.85) !important;
+    color: #e2e8f0 !important;
+    border: 1px solid rgba(148, 163, 184, 0.3) !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease !important;
+}}
+
+div[data-testid="stHorizontalBlock"] button:hover {{
+    background-color: #2563eb !important;
     color: #ffffff !important;
-    border: 1px solid rgba(255, 255, 255, 0.25) !important;
-    border-radius: 8px;
+    border-color: #3b82f6 !important;
 }}
 </style>
 """
