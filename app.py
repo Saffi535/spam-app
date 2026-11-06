@@ -9,7 +9,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# Background Wallpaper & Dark Contrast CSS
+# Background Wallpaper & CSS
 background_image_url = "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1920&q=80"
 
 custom_css = f"""
@@ -35,24 +35,25 @@ h1, h2, h3, p, span, label {{
     border-radius: 10px !important;
 }}
 
-/* Alert Box fix: Strong Dark Background + Bold Visible Text */
+/* Alert Box: Solid Light Background + Pure BLACK Text */
 div[data-testid="stAlert"] {{
-    background-color: #0f172a !important;
-    border-radius: 10px !important;
-    padding: 16px !important;
-}}
-
-/* Spam Alert specific colors */
-div[data-testid="stAlert"]:has(div:contains("SPAM")) {{
+    background-color: #fee2e2 !important;
     border: 2px solid #ef4444 !important;
-}}
-div[data-testid="stAlert"] * {{
-    color: #ffffff !important;
-    font-size: 17px !important;
-    font-weight: 600 !important;
+    border-radius: 10px !important;
 }}
 
-/* Buttons */
+/* Force all text, icons, and paragraphs inside Alert to pure BLACK */
+div[data-testid="stAlert"] p,
+div[data-testid="stAlert"] span,
+div[data-testid="stAlert"] div,
+div[data-testid="stAlert"] svg {{
+    color: #000000 !important;
+    fill: #000000 !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+}}
+
+/* Quick Action Buttons */
 div[data-testid="stHorizontalBlock"] button {{
     background-color: rgba(30, 41, 59, 0.85) !important;
     color: #e2e8f0 !important;
