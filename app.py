@@ -9,57 +9,60 @@ st.set_page_config(
     layout="centered"
 )
 
-# 1. Background Wallpaper & Modern Glass UI CSS
+# Background Wallpaper & Dark Contrast CSS
 background_image_url = "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1920&q=80"
 
 custom_css = f"""
 <style>
 .stApp {{
-    background-image: linear-gradient(rgba(10, 15, 29, 0.82), rgba(10, 15, 29, 0.88)), url("{background_image_url}");
+    background-image: linear-gradient(rgba(10, 15, 29, 0.85), rgba(10, 15, 29, 0.90)), url("{background_image_url}");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
 }}
 
-/* Clean readable headings & text */
+/* Headings and labels */
 h1, h2, h3, p, span, label {{
     color: #f8fafc !important;
 }}
 
-/* Dark Glassmorphism Input Textarea */
+/* Input Box */
 .stTextArea textarea {{
-    background-color: rgba(15, 23, 42, 0.75) !important;
+    background-color: rgba(15, 23, 42, 0.85) !important;
     color: #38bdf8 !important;
     font-size: 16px !important;
     border: 1.5px solid rgba(56, 189, 248, 0.35) !important;
     border-radius: 10px !important;
-    backdrop-filter: blur(8px) !important;
 }}
 
-.stTextArea textarea:focus {{
-    border-color: #38bdf8 !important;
-    box-shadow: 0 0 10px rgba(56, 189, 248, 0.4) !important;
+/* Alert Box fix: Strong Dark Background + Bold Visible Text */
+div[data-testid="stAlert"] {{
+    background-color: #0f172a !important;
+    border-radius: 10px !important;
+    padding: 16px !important;
 }}
 
-/* Quick Action Secondary Buttons */
+/* Spam Alert specific colors */
+div[data-testid="stAlert"]:has(div:contains("SPAM")) {{
+    border: 2px solid #ef4444 !important;
+}}
+div[data-testid="stAlert"] * {{
+    color: #ffffff !important;
+    font-size: 17px !important;
+    font-weight: 600 !important;
+}}
+
+/* Buttons */
 div[data-testid="stHorizontalBlock"] button {{
     background-color: rgba(30, 41, 59, 0.85) !important;
     color: #e2e8f0 !important;
     border: 1px solid rgba(148, 163, 184, 0.3) !important;
-    border-radius: 8px !important;
-    transition: all 0.3s ease !important;
-}}
-
-div[data-testid="stHorizontalBlock"] button:hover {{
-    background-color: #2563eb !important;
-    color: #ffffff !important;
-    border-color: #3b82f6 !important;
 }}
 </style>
 """
 st.markdown(custom_css, unsafe_allow_html=True)
 
-# 2. Text to Speech Function (Browser Voice)
+# Text to Speech Function (Browser Voice)
 def play_voice(text):
     clean_text = text.replace("'", "").replace('"', '')
     js_code = f"""
@@ -118,16 +121,14 @@ try:
             st.divider()
             if prediction == 1:
                 confidence = probability[1] * 100
-                st.error(f"🚨 **SPAM Message Detected!**")
-                st.write(f"**Confidence:** `{confidence:.2f}%`")
+                st.error(f"🚨 SPAM Message Detected! (Confidence: {confidence:.2f}%)")
                 st.progress(probability[1])
                 play_voice("Alert! This message is classified as Spam.")
             else:
                 confidence = probability[0] * 100
-                st.success(f"✅ **HAM (Legitimate Message)**")
-                st.write(f"**Confidence:** `{confidence:.2f}%`")
+                st.success(f"✅ HAM (Legitimate Message) - Confidence: {confidence:.2f}%")
                 st.progress(probability[0])
                 play_voice("This message is legitimate and safe.")
 
 except FileNotFoundError:
-    st.error("⚠️ Model files nahi milin! Check karein ke `rf_model.pkl` aur `tfidf_vectorizer.pkl` repo mein upload hain.")
+    st.error("⚠️ Model files nahi milin! Check karein ke rf_model.pkl aur tfidf_vectorizer.pkl upload hain.")
