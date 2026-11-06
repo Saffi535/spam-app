@@ -9,7 +9,7 @@ st.set_page_config(
     layout="centered"
 )
 
-# Background Wallpaper & CSS
+# Background Wallpaper & Animated CSS
 background_image_url = "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1920&q=80"
 
 custom_css = f"""
@@ -33,16 +33,27 @@ h1, h2, h3, p, span, label {{
     font-size: 16px !important;
     border: 1.5px solid rgba(56, 189, 248, 0.35) !important;
     border-radius: 10px !important;
+    transition: all 0.3s ease;
 }}
 
-/* Alert Box: Solid Light Background + Pure BLACK Text */
+.stTextArea textarea:focus {{
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.4) !important;
+}}
+
+/* Alert Box Styling: Black Text + Smooth Pop Animation */
 div[data-testid="stAlert"] {{
     background-color: #fee2e2 !important;
     border: 2px solid #ef4444 !important;
     border-radius: 10px !important;
+    animation: popIn 0.5s ease-out;
 }}
 
-/* Force all text, icons, and paragraphs inside Alert to pure BLACK */
+@keyframes popIn {{
+    0% {{ transform: scale(0.92); opacity: 0; }}
+    100% {{ transform: scale(1); opacity: 1; }}
+}}
+
 div[data-testid="stAlert"] p,
 div[data-testid="stAlert"] span,
 div[data-testid="stAlert"] div,
@@ -58,6 +69,13 @@ div[data-testid="stHorizontalBlock"] button {{
     background-color: rgba(30, 41, 59, 0.85) !important;
     color: #e2e8f0 !important;
     border: 1px solid rgba(148, 163, 184, 0.3) !important;
+    border-radius: 8px !important;
+    transition: transform 0.2s ease;
+}}
+
+div[data-testid="stHorizontalBlock"] button:hover {{
+    transform: translateY(-2px);
+    border-color: #38bdf8 !important;
 }}
 </style>
 """
@@ -115,9 +133,10 @@ try:
         if not user_input.strip():
             st.warning("Pehle koi text message enter karein!")
         else:
-            transformed_input = vectorizer.transform([user_input])
-            prediction = model.predict(transformed_input)[0]
-            probability = model.predict_proba(transformed_input)[0]
+            with st.spinner("Analyzing message patterns..."):
+                transformed_input = vectorizer.transform([user_input])
+                prediction = model.predict(transformed_input)[0]
+                probability = model.predict_proba(transformed_input)[0]
 
             st.divider()
             if prediction == 1:
@@ -126,6 +145,8 @@ try:
                 st.progress(probability[1])
                 play_voice("Alert! This message is classified as Spam.")
             else:
+                # Safe result animation
+                st.balloons()
                 confidence = probability[0] * 100
                 st.success(f"✅ HAM (Legitimate Message) - Confidence: {confidence:.2f}%")
                 st.progress(probability[0])
